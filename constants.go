@@ -296,5 +296,5 @@ var (
 		IndexedColumns: []string{"id", "committee_id", "filed_doc_id"},
 	}
 
-	AllTables = []Table{Receipts}
+	AllTables = []Table{Candidates, CandidateCommittees, CandidateElections, Committees, CommitteeOfficers, D2Totals, Expenditures, FiledDocs, Investments, Officers, PreviousOfficers, Receipts}
 )
