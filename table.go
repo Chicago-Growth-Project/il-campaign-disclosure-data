@@ -6,6 +6,8 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"strconv"
+	"strings"
 )
 
 const DatabasePath = "new_elections.db"
@@ -52,6 +54,12 @@ func (t *Table) Create() error {
 	if err != nil {
 		return fmt.Errorf("failed to load file: %w", err)
 	}
+
+	count, err := t.countRows()
+	if err != nil {
+		return fmt.Errorf("failed to count rows: %w", err)
+	}
+	fmt.Printf("Loaded %d rows into %s\n", count, t.Name)
 
 	for _, filename := range []string{t.tempFilename(), t.newFilename()} {
 		err = os.Remove(filename)
@@ -125,6 +133,14 @@ func (t *Table) loadFile(filepath string) error {
 		return fmt.Errorf("failed to load file %s into table %s: %w", filepath, t.Name, err)
 	}
 	return nil
+}
+
+func (t *Table) countRows() (int, error) {
+	output, err := exec.Command("sqlite3", DatabasePath, fmt.Sprintf("SELECT COUNT(*) FROM %s", t.Name)).Output()
+	if err != nil {
+		return 0, fmt.Errorf("failed to count rows: %w", err)
+	}
+	return strconv.Atoi(strings.TrimSpace(string(output)))
 }
 
 func (t *Table) tempFilename() string {

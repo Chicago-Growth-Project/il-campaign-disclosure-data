@@ -3,8 +3,10 @@ package main
 import "fmt"
 
 func main() {
-	err := Candidates.Create()
-	if err != nil {
-		fmt.Println(err)
+	for _, table := range AllTables {
+		err := table.Create()
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 }

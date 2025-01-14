@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"io"
 	"net/http"
 	"os"
@@ -24,11 +25,13 @@ func (r *quoteReplacer) Read(p []byte) (n int, err error) {
 }
 
 func downloadFile(filepath string, url string) error {
-	out, err := os.Create(filepath)
+	outputFile, err := os.Create(filepath)
 	if err != nil {
 		return err
 	}
-	defer out.Close()
+	defer outputFile.Close()
+
+	writer := bufio.NewWriter(outputFile)
 
 	resp, err := http.Get(url)
 	if err != nil {
@@ -41,9 +44,12 @@ func downloadFile(filepath string, url string) error {
 	// single quotes when downloading the file.
 	quoteReplacer := &quoteReplacer{reader: resp.Body}
 
-	_, err = io.Copy(out, quoteReplacer)
+	_, err = io.Copy(writer, quoteReplacer)
 	if err != nil {
 		return err
 	}
+
+	writer.Flush()
+
 	return nil
 }
