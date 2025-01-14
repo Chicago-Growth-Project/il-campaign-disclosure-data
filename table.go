@@ -27,7 +27,7 @@ type Column struct {
 
 type Table struct {
 	Name           string
-	IndexedColumns []string
+	IndexedColumns []string // TODO: Possibly handle unique indexes
 	URL            string
 	Columns        []Column
 }
@@ -92,7 +92,6 @@ func (t *Table) convertFile(filepath string) error {
 			return fmt.Errorf("failed to read old file: %w", err)
 		} else if firstLine {
 			firstLine = false
-			continue
 		} else {
 			csvWriter.Write(rec)
 		}
