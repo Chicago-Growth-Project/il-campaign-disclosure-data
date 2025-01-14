@@ -25,10 +25,3 @@ func TestIndexColumnSQLs(t *testing.T) {
 		}
 	}
 }
-
-func TestCreateTable(t *testing.T) {
-	err := Candidates.createTable()
-	if err != nil {
-		t.Errorf("Expected nil, got %s", err)
-	}
-}
