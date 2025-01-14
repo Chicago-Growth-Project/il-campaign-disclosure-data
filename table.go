@@ -120,11 +120,11 @@ func (t *Table) createTable() error {
 }
 
 func (t *Table) loadFile(filepath string) error {
-	output, err := exec.Command("sqlite3", DatabasePath, ".mode csv", ".import", filepath, t.Name).Output()
+	output, err := exec.Command("sqlite3", DatabasePath, ".mode csv", fmt.Sprintf(".import %s %s", filepath, t.Name)).Output()
 	if err != nil {
+		fmt.Println(string(output))
 		return fmt.Errorf("failed to load file %s into table %s: %w", filepath, t.Name, err)
 	}
-	fmt.Println(string(output))
 	return nil
 }
 
