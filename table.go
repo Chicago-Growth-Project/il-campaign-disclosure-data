@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/csv"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -105,6 +106,8 @@ func (t *Table) convertFile(filepath string) error {
 		rec, err := tsvReader.Read()
 		if err == io.EOF {
 			break
+		} else if errors.Unwrap(err) == csv.ErrFieldCount {
+			fmt.Printf("Wrong number of fields on row detected. Usually this indicates an unescaped tab in the data. Skipping row:\n %v\n", rec)
 		} else if err != nil {
 			return fmt.Errorf("failed to read old file: %w", err)
 		} else if firstLine {
