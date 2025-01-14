@@ -15,9 +15,10 @@ const DatabasePath = "new_elections.db"
 type ColumnType string
 
 const (
-	ColumnTypeString ColumnType = "STRING"
-	ColumnTypeInt    ColumnType = "INTEGER"
-	ColumnTypeBool   ColumnType = "BOOLEAN"
+	ColumnTypeString  ColumnType = "STRING"
+	ColumnTypeInt     ColumnType = "INTEGER"
+	ColumnTypeDecimal ColumnType = "DECIMAL(12,2)"
+	ColumnTypeBool    ColumnType = "BOOLEAN"
 )
 
 type Column struct {
@@ -34,6 +35,14 @@ type Table struct {
 	Columns        []Column
 }
 
+/*
+Creates a new table through the following steps:
+* Download the TSV from the URL. As part of this, we replace all double quotes with single quotes.
+* Convert the TSV to CSV and rename the headers. We can handle bad rows at this point.
+* Create the table and indexes.
+* Load the CSV into the table.
+* Remove the temporary files.
+*/
 func (t *Table) Create() error {
 	err := downloadFile(t.tempFilename(), t.URL)
 	if err != nil {
