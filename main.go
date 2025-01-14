@@ -1,13 +1,16 @@
 package main
 
-import (
-	"database/sql"
-	"fmt"
-	"log"
-	"os"
-)
+import "fmt"
 
 func main() {
+	err := Candidates.Create()
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+/*
+func main2() {
 	fmt.Println("vim-go")
 
 	sources := map[string]string{
@@ -57,3 +60,4 @@ func NewDB(driverName, dataSourceName string) *sql.DB {
 	}
 	return db
 }
+*/
