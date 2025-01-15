@@ -1,7 +1,5 @@
 package main
 
-const DatabasePath = "il-campaign-disclosures.db"
-
 var (
 	Candidates = Table{
 		Name: "candidates",
