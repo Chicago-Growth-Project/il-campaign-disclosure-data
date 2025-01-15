@@ -6,8 +6,8 @@ var (
 		URL:  "https://www.elections.il.gov/NewDocDisplay.aspx?khDtbt6dhc80IP6TQjNtMmEtKVxRXnDbQIqMvttCDL2B03HzqN0NedeM1l1mPpM%2fLor95xcMnwsP6tzjwAh%2fE%2f0fWy2j%2byVCCoJfGoAETz8JVtDTd1fxr8vvpWUdqx9uvIMji%2bZ5aMgzhvnDX4JRo4tJ867wjNkTObHG93G%2bsgfaoI6R%2fraCOioDY6C7ntO4jZ3bgsgRc69EFlgrw5244A%3d%3d",
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
-			{Name: "first_name", RawName: "FirstName", Type: ColumnTypeString},
-			{Name: "last_name", RawName: "LastName", Type: ColumnTypeString},
+			{Name: "last_name", RawName: "FirstName", Type: ColumnTypeString},
+			{Name: "first_name", RawName: "LastName", Type: ColumnTypeString},
 			{Name: "address1", RawName: "Address1", Type: ColumnTypeString},
 			{Name: "address2", RawName: "Address2", Type: ColumnTypeString},
 			{Name: "city", RawName: "City", Type: ColumnTypeString},
@@ -20,17 +20,17 @@ var (
 			{Name: "party_affiliation", RawName: "PartyAffiliation", Type: ColumnTypeString},
 			{Name: "redaction_requested", RawName: "RedactionRequested", Type: ColumnTypeBool},
 		},
-		IndexedColumns: []string{"id", "first_name", "last_name"},
+		IndexedColumns: []string{"id", "last_name", "first_name"},
 	}
 	CandidateCommittees = Table{
 		Name: "candidate_committees",
 		URL:  "https://www.elections.il.gov/NewDocDisplay.aspx?khDtbt6dhc80IP6TQjNtMmEtKVxRXnDbQIqMvttCDL2B03HzqN0NedeM1l1mPpM%2fLor95xcMnwsP6tzjwAh%2fE%2f0fWy2j%2byVCCoJfGoAETz8JVtDTd1fxr8vvpWUdqx9uvIMji%2bZ5aMgzhvnDX4JRo4tJ867wjNkTV7DLOml0VEM8NtNSWZdDSnMVuzSKhxsytLIaRg2XNOt%2bmc6EtQzx68Qs1cXUpNe18YUPsqlkdzE%3d",
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
-			{Name: "candidate_id", RawName: "CandidateID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "committee_id", RawName: "CommitteeID", Type: ColumnTypeInt, NotNullable: true},
+			{Name: "candidate_id", RawName: "CandidateID", Type: ColumnTypeInt, NotNullable: true},
 		},
-		IndexedColumns: []string{"id", "candidate_id", "committee_id"},
+		IndexedColumns: []string{"id", "committee_id", "candidate_id"},
 	}
 	CandidateElections = Table{
 		Name: "candidate_elections",
@@ -198,7 +198,7 @@ var (
 	}
 	Investments = Table{
 		Name: "investments",
-		URL:  "https://www.elections.il.gov/NewDocDisplay.aspx?khDtbt6dhc80IP6TQjNtMmEtKVxRXnDbQIqMvttCDL2B03HzqN0NedeM1l1mPpM%2fLor95xcMnwsP6tzjwAh%2fE%2f0fWy2j%2byVCCoJfGoAETz8JVtDTd1fxr8vvpWUdqx9uvIMji%2bZ5aMgzhvnDX4JRo4tJ867wjNkTW8OecYgEwdA%2bMQgVwpOb7fUjvgTu6YWEmHNhcPt5DgTZFEAQ%3d%3d",
+		URL:  "https://elections.il.gov/campaigndisclosuredatafiles/Investments.txt",
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "committee_id", RawName: "CommitteeID", Type: ColumnTypeInt, NotNullable: true},
@@ -296,5 +296,5 @@ var (
 		IndexedColumns: []string{"id", "committee_id", "filed_doc_id"},
 	}
 
-	AllTables = []Table{Candidates, CandidateCommittees, CandidateElections, Committees, CommitteeOfficers, D2Totals, Expenditures, FiledDocs, Investments, Officers, PreviousOfficers, Receipts}
+	AllTables = []Table{Investments}
 )

@@ -97,7 +97,12 @@ func (t *Table) convertFile(filepath string) error {
 	csvWriter := csv.NewWriter(newFile)
 	csvWriter.Write(t.csvHeaders())
 
-	tsvReader := csv.NewReader(oldFile)
+	// Go's CSV reader, when in TSV mode, can't handle double quotes inside
+	// of fields. To get around this, we replace all double quotes with
+	// single quotes when downloading the file.
+	quoteReplacer := &quoteReplacer{oldFile}
+
+	tsvReader := csv.NewReader(quoteReplacer)
 	tsvReader.Comma = '\t'
 	tsvReader.FieldsPerRecord = len(t.Columns)
 	firstLine := true
