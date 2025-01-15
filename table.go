@@ -11,8 +11,6 @@ import (
 	"strings"
 )
 
-const DatabasePath = "il-campaign-disclosures.db"
-
 type ColumnType string
 
 const (

@@ -1,9 +1,11 @@
 package main
 
+const DatabasePath = "il-campaign-disclosures.db"
+
 var (
 	Candidates = Table{
 		Name: "candidates",
-		URL:  "https://www.elections.il.gov/NewDocDisplay.aspx?khDtbt6dhc80IP6TQjNtMmEtKVxRXnDbQIqMvttCDL2B03HzqN0NedeM1l1mPpM%2fLor95xcMnwsP6tzjwAh%2fE%2f0fWy2j%2byVCCoJfGoAETz8JVtDTd1fxr8vvpWUdqx9uvIMji%2bZ5aMgzhvnDX4JRo4tJ867wjNkTObHG93G%2bsgfaoI6R%2fraCOioDY6C7ntO4jZ3bgsgRc69EFlgrw5244A%3d%3d",
+		URL:  "https://elections.il.gov/campaigndisclosuredatafiles/Candidates.txt",
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "last_name", RawName: "FirstName", Type: ColumnTypeString},
@@ -24,7 +26,7 @@ var (
 	}
 	CandidateCommittees = Table{
 		Name: "candidate_committees",
-		URL:  "https://www.elections.il.gov/NewDocDisplay.aspx?khDtbt6dhc80IP6TQjNtMmEtKVxRXnDbQIqMvttCDL2B03HzqN0NedeM1l1mPpM%2fLor95xcMnwsP6tzjwAh%2fE%2f0fWy2j%2byVCCoJfGoAETz8JVtDTd1fxr8vvpWUdqx9uvIMji%2bZ5aMgzhvnDX4JRo4tJ867wjNkTV7DLOml0VEM8NtNSWZdDSnMVuzSKhxsytLIaRg2XNOt%2bmc6EtQzx68Qs1cXUpNe18YUPsqlkdzE%3d",
+		URL:  "https://elections.il.gov/campaigndisclosuredatafiles/CmteCandidateLinks.txt",
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "committee_id", RawName: "CommitteeID", Type: ColumnTypeInt, NotNullable: true},
@@ -34,7 +36,7 @@ var (
 	}
 	CandidateElections = Table{
 		Name: "candidate_elections",
-		URL:  "https://www.elections.il.gov/NewDocDisplay.aspx?khDtbt6dhc80IP6TQjNtMmEtKVxRXnDbQIqMvttCDL2B03HzqN0NedeM1l1mPpM%2fLor95xcMnwsP6tzjwAh%2fE%2f0fWy2j%2byVCCoJfGoAETz8JVtDTd1fxr8vvpWUdqx9uvIMji%2bZ5aMgzhvnDX4JRo4tJ867wjNkTObHG93G%2bsgdslDDZtUVFcJiezaXUwsYOP5VwDs%2b%2f5AV0aLwo%2fAxGsw%3d%3d",
+		URL:  "https://elections.il.gov/campaigndisclosuredatafiles/CanElections.txt",
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "candidate_id", RawName: "CandidateID", Type: ColumnTypeInt, NotNullable: true},
@@ -50,7 +52,7 @@ var (
 	}
 	Committees = Table{
 		Name: "committees",
-		URL:  "https://www.elections.il.gov/NewDocDisplay.aspx?khDtbt6dhc80IP6TQjNtMmEtKVxRXnDbQIqMvttCDL2B03HzqN0NedeM1l1mPpM%2fLor95xcMnwsP6tzjwAh%2fE%2f0fWy2j%2byVCCoJfGoAETz8JVtDTd1fxr8vvpWUdqx9uvIMji%2bZ5aMgzhvnDX4JRo4tJ867wjNkTi2h8HDZ4OVd3tQEKCDCs9C1ZMQMrpj6CP8Ie6AlL%2byGH1WAwCdQ40Q%3d%3d",
+		URL:  "https://elections.il.gov/campaigndisclosuredatafiles/Committees.txt",
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "type_of_committee", RawName: "TypeOfCommittee", Type: ColumnTypeString},
@@ -84,7 +86,7 @@ var (
 	}
 	CommitteeOfficers = Table{
 		Name: "committee_officers",
-		URL:  "https://www.elections.il.gov/NewDocDisplay.aspx?khDtbt6dhc80IP6TQjNtMmEtKVxRXnDbQIqMvttCDL2B03HzqN0NedeM1l1mPpM%2fLor95xcMnwsP6tzjwAh%2fE%2f0fWy2j%2byVCCoJfGoAETz8JVtDTd1fxr8vvpWUdqx9uvIMji%2bZ5aMgzhvnDX4JRo4tJ867wjNkTV7DLOml0VEM8NtNSWZdDSnMVuzSKhxsytLIaRg2XNOt%2bmc6EtQzx68Qs1cXUpNe18YUPsqlkdzE%3d",
+		URL:  "https://elections.il.gov/campaigndisclosuredatafiles/CmteOfficerLinks.txt",
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "committee_id", RawName: "CommitteeID", Type: ColumnTypeInt, NotNullable: true},
@@ -94,7 +96,7 @@ var (
 	}
 	D2Totals = Table{
 		Name: "d2_totals",
-		URL:  "https://www.elections.il.gov/NewDocDisplay.aspx?khDtbt6dhc80IP6TQjNtMmEtKVxRXnDbQIqMvttCDL2B03HzqN0NedeM1l1mPpM%2fLor95xcMnwsP6tzjwAh%2fE%2f0fWy2j%2byVCCoJfGoAETz8JVtDTd1fxr8vvpWUdqx9uvIMji%2bZ5aMgzhvnDX4JRo4tJ867wjNkTNkbSnZzI0yeKmXS%2fgJ83cT19aS7YfngCrsBD%2feW6Rio%3d",
+		URL:  "https://elections.il.gov/campaigndisclosuredatafiles/D2Totals.txt",
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "committee_id", RawName: "CommitteeID", Type: ColumnTypeInt, NotNullable: true},
@@ -132,7 +134,7 @@ var (
 	}
 	Expenditures = Table{
 		Name: "expenditures",
-		URL:  "https://www.elections.il.gov/NewDocDisplay.aspx?khDtbt6dhc80IP6TQjNtMmEtKVxRXnDbQIqMvttCDL2B03HzqN0NedeM1l1mPpM%2fLor95xcMnwsP6tzjwAh%2fE%2f0fWy2j%2byVCCoJfGoAETz8JVtDTd1fxr8vvpWUdqx9uvIMji%2bZ5aMgzhvnDX4JRo4tJ867wjNkTD%2bvpWmKc2VZ%2bJCbBCxl4cx7xzlFO5F9SQoP59eSuEcBsowHAAMouEA%3d%3d",
+		URL:  "https://elections.il.gov/campaigndisclosuredatafiles/Expenditures.txt",
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "committee_id", RawName: "CommitteeID", Type: ColumnTypeInt, NotNullable: true},
@@ -162,7 +164,7 @@ var (
 	}
 	FiledDocs = Table{
 		Name: "filed_docs",
-		URL:  "https://www.elections.il.gov/NewDocDisplay.aspx?khDtbt6dhc80IP6TQjNtMmEtKVxRXnDbQIqMvttCDL2B03HzqN0NedeM1l1mPpM%2fLor95xcMnwsP6tzjwAh%2fE%2f0fWy2j%2byVCCoJfGoAETz8JVtDTd1fxr8vvpWUdqx9uvIMji%2bZ5aMgzhvnDX4JRo4tJ867wjNkTU%2fFrCSWNdYSLrN5i8qj5Mm5PBztveemQ9yvfZPsAhcs%3d",
+		URL:  "https://elections.il.gov/campaigndisclosuredatafiles/FiledDocs.txt",
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "committee_id", RawName: "CommitteeID", Type: ColumnTypeInt, NotNullable: true},
@@ -224,7 +226,7 @@ var (
 	}
 	Officers = Table{
 		Name: "officers",
-		URL:  "https://www.elections.il.gov/NewDocDisplay.aspx?khDtbt6dhc80IP6TQjNtMmEtKVxRXnDbQIqMvttCDL2B03HzqN0NedeM1l1mPpM%2fLor95xcMnwsP6tzjwAh%2fE%2f0fWy2j%2byVCCoJfGoAETz8JVtDTd1fxr8vvpWUdqx9uvIMji%2bZ5aMgzhvnDX4JRo4tJ867wjNkTaRZmFX4Fy2COa3u2oOoxB%2bnPaGWLhslX%2b3THZo7F5LA%3d",
+		URL:  "https://elections.il.gov/campaigndisclosuredatafiles/Officers.txt",
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "last_name", RawName: "LastName", Type: ColumnTypeString},
@@ -242,7 +244,7 @@ var (
 	}
 	PreviousOfficers = Table{
 		Name: "previous_officers",
-		URL:  "https://www.elections.il.gov/NewDocDisplay.aspx?khDtbt6dhc80IP6TQjNtMmEtKVxRXnDbQIqMvttCDL2B03HzqN0NedeM1l1mPpM%2fLor95xcMnwsP6tzjwAh%2fE%2f0fWy2j%2byVCCoJfGoAETz8JVtDTd1fxr8vvpWUdqx9uvIMji%2bZ5aMgzhvnDX4JRo4tJ867wjNkTbjIfKm4g5vRkk3oDLGo4QAmi7hKUVNhW8jnpJCZDhjCg51o8G7vWmg%3d%3d",
+		URL:  "https://elections.il.gov/campaigndisclosuredatafiles/PrevOfficers.txt",
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "committee_id", RawName: "CommitteeID", Type: ColumnTypeInt, NotNullable: true},
@@ -261,7 +263,7 @@ var (
 	}
 	Receipts = Table{
 		Name: "receipts",
-		URL:  "https://www.elections.il.gov/NewDocDisplay.aspx?khDtbt6dhc80IP6TQjNtMmEtKVxRXnDbQIqMvttCDL2B03HzqN0NedeM1l1mPpM%2fLor95xcMnwsP6tzjwAh%2fE%2f0fWy2j%2byVCCoJfGoAETz8JVtDTd1fxr8vvpWUdqx9uvIMji%2bZ5aMgzhvnDX4JRo4tJ867wjNkT7AEd3icGKOoijWRSj8iPgvRbQD3nKWoOP7H2ulEOEbY%3d",
+		URL:  "https://elections.il.gov/campaigndisclosuredatafiles/Receipts.txt",
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "committee_id", RawName: "CommitteeID", Type: ColumnTypeInt, NotNullable: true},
@@ -296,5 +298,18 @@ var (
 		IndexedColumns: []string{"id", "committee_id", "filed_doc_id"},
 	}
 
-	AllTables = []Table{Investments}
+	AllTables = []Table{
+		Candidates,
+		CandidateCommittees,
+		CandidateElections,
+		Committees,
+		CommitteeOfficers,
+		D2Totals,
+		Expenditures,
+		FiledDocs,
+		Investments,
+		Officers,
+		PreviousOfficers,
+		Receipts,
+	}
 )
