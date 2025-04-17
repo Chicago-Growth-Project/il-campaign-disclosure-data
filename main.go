@@ -20,8 +20,14 @@ func main() {
 		Receipts,
 	}
 
+	db, err := ConnectDb()
+	if err != nil {
+		fmt.Println("Error connecting to database:", err)
+		return
+	}
+
 	for _, table := range allTables {
-		err := table.Create()
+		err := table.Create(db)
 		if err != nil {
 			fmt.Println(err)
 		}
