@@ -1,8 +1,9 @@
 package main
 
 import (
-  "database/sql"
-  _ "github.com/marcboeker/go-duckdb"
+	"database/sql"
+
+	_ "github.com/marcboeker/go-duckdb"
 )
 
 func ConnectDb() (*sql.DB, error) {
@@ -11,8 +12,6 @@ func ConnectDb() (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	defer db.Close()
 
 	return db, nil
 }

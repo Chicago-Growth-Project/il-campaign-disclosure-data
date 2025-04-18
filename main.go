@@ -21,6 +21,9 @@ func main() {
 	}
 
 	db, err := ConnectDb()
+
+	defer db.Close()
+
 	if err != nil {
 		fmt.Println("Error connecting to database:", err)
 		return

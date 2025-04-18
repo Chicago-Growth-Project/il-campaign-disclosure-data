@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
 )
 
 type ColumnType string
@@ -57,7 +56,7 @@ func (t *Table) Create(db *sql.DB) error {
 		return fmt.Errorf("failed to create table: %w", err)
 	}
 
-	err = t.loadFile(t.newFilename())
+	err = t.loadFile(t.newFilename(), db)
 	if err != nil {
 		return fmt.Errorf("failed to load file: %w", err)
 	}
@@ -138,10 +137,10 @@ func (t *Table) createTable(db *sql.DB) error {
 	return nil
 }
 
-func (t *Table) loadFile(filepath string) error {
-	output, err := exec.Command("sqlite3", DatabasePath, ".mode csv", fmt.Sprintf(".import %s %s", filepath, t.Name)).Output()
+func (t *Table) loadFile(filepath string, db *sql.DB) error {
+	query := fmt.Sprintf("COPY %s FROM '%s' (AUTO_DETECT TRUE);", t.Name, filepath)
+	_, err := db.Exec(query)
 	if err != nil {
-		fmt.Println(string(output))
 		return fmt.Errorf("failed to load file %s into table %s: %w", filepath, t.Name, err)
 	}
 	return nil
@@ -149,7 +148,8 @@ func (t *Table) loadFile(filepath string) error {
 
 func (t *Table) countRows(db *sql.DB) (int, error) {
 	var count int
-	row := db.QueryRow("SELECT COUNT(*) FROM ?", t.Name)
+	query := fmt.Sprintf("SELECT COUNT(*) FROM %s", t.Name)
+	row := db.QueryRow(query)
 	err := row.Scan(&count)
 	if err != nil {
 		return 0, fmt.Errorf("failed to count rows: %w", err)
