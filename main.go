@@ -30,6 +30,7 @@ func main() {
 	}
 
 	for _, table := range allTables {
+		fmt.Println("Creating table:", table.Name)
 		err := table.Create(db)
 		if err != nil {
 			fmt.Println(err)

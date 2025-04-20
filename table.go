@@ -14,6 +14,7 @@ type ColumnType string
 const (
 	ColumnTypeString  ColumnType = "STRING"
 	ColumnTypeInt     ColumnType = "INTEGER"
+	ColumnTypeBigInt  ColumnType = "BIGINT"
 	ColumnTypeDecimal ColumnType = "DECIMAL(12,2)"
 	ColumnTypeBool    ColumnType = "BOOLEAN"
 )
@@ -73,6 +74,9 @@ func (t *Table) Create(db *sql.DB) error {
 			return fmt.Errorf("failed to remove file %s: %w", filename, err)
 		}
 	}
+
+	fmt.Println("Removed temporary files:", t.tempFilename(), t.newFilename())
+	fmt.Println("Done with table:", t.Name)
 
 	return nil
 }
@@ -138,7 +142,7 @@ func (t *Table) createTable(db *sql.DB) error {
 }
 
 func (t *Table) loadFile(filepath string, db *sql.DB) error {
-	query := fmt.Sprintf("COPY %s FROM '%s' (AUTO_DETECT TRUE);", t.Name, filepath)
+	query := fmt.Sprintf("COPY %s FROM '%s' (AUTO_DETECT TRUE, IGNORE_ERRORS TRUE, STORE_REJECTS TRUE);", t.Name, filepath)
 	_, err := db.Exec(query)
 	if err != nil {
 		return fmt.Errorf("failed to load file %s into table %s: %w", filepath, t.Name, err)
