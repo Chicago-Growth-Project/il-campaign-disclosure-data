@@ -1,14 +1,12 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/csv"
 	"errors"
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
-	"strconv"
-	"strings"
 )
 
 type ColumnType string
@@ -16,6 +14,7 @@ type ColumnType string
 const (
 	ColumnTypeString  ColumnType = "STRING"
 	ColumnTypeInt     ColumnType = "INTEGER"
+	ColumnTypeBigInt  ColumnType = "BIGINT"
 	ColumnTypeDecimal ColumnType = "DECIMAL(12,2)"
 	ColumnTypeBool    ColumnType = "BOOLEAN"
 )
@@ -42,7 +41,7 @@ Creates a new table through the following steps:
 * Load the CSV into the table.
 * Remove the temporary files.
 */
-func (t *Table) Create() error {
+func (t *Table) Create(db *sql.DB) error {
 	err := downloadFile(t.tempFilename(), t.URL)
 	if err != nil {
 		return fmt.Errorf("failed to download file: %w", err)
@@ -53,17 +52,17 @@ func (t *Table) Create() error {
 		return fmt.Errorf("failed to convert file: %w", err)
 	}
 
-	err = t.createTable()
+	err = t.createTable(db)
 	if err != nil {
 		return fmt.Errorf("failed to create table: %w", err)
 	}
 
-	err = t.loadFile(t.newFilename())
+	err = t.loadFile(t.newFilename(), db)
 	if err != nil {
 		return fmt.Errorf("failed to load file: %w", err)
 	}
 
-	count, err := t.countRows()
+	count, err := t.countRows(db)
 	if err != nil {
 		return fmt.Errorf("failed to count rows: %w", err)
 	}
@@ -75,6 +74,9 @@ func (t *Table) Create() error {
 			return fmt.Errorf("failed to remove file %s: %w", filename, err)
 		}
 	}
+
+	fmt.Println("Removed temporary files:", t.tempFilename(), t.newFilename())
+	fmt.Println("Done with table:", t.Name)
 
 	return nil
 }
@@ -124,16 +126,14 @@ func (t *Table) convertFile(filepath string) error {
 	return nil
 }
 
-func (t *Table) createTable() error {
-	cmd := exec.Command("sqlite3", DatabasePath, t.createTableSQL())
-	err := cmd.Run()
+func (t *Table) createTable(db *sql.DB) error {
+	_, err := db.Exec(t.createTableSQL())
 	if err != nil {
 		return fmt.Errorf("failed to create table %s: %w", t.Name, err)
 	}
 
 	for _, indexSql := range t.indexColumnSQLs() {
-		cmd = exec.Command("sqlite3", DatabasePath, indexSql)
-		err = cmd.Run()
+		_, err = db.Exec(indexSql)
 		if err != nil {
 			return fmt.Errorf("failed to create index for %s: %w", t.Name, err)
 		}
@@ -141,21 +141,24 @@ func (t *Table) createTable() error {
 	return nil
 }
 
-func (t *Table) loadFile(filepath string) error {
-	output, err := exec.Command("sqlite3", DatabasePath, ".mode csv", fmt.Sprintf(".import %s %s", filepath, t.Name)).Output()
+func (t *Table) loadFile(filepath string, db *sql.DB) error {
+	query := fmt.Sprintf("COPY %s FROM '%s' (AUTO_DETECT TRUE, IGNORE_ERRORS TRUE, STORE_REJECTS TRUE);", t.Name, filepath)
+	_, err := db.Exec(query)
 	if err != nil {
-		fmt.Println(string(output))
 		return fmt.Errorf("failed to load file %s into table %s: %w", filepath, t.Name, err)
 	}
 	return nil
 }
 
-func (t *Table) countRows() (int, error) {
-	output, err := exec.Command("sqlite3", DatabasePath, fmt.Sprintf("SELECT COUNT(*) FROM %s", t.Name)).Output()
+func (t *Table) countRows(db *sql.DB) (int, error) {
+	var count int
+	query := fmt.Sprintf("SELECT COUNT(*) FROM %s", t.Name)
+	row := db.QueryRow(query)
+	err := row.Scan(&count)
 	if err != nil {
 		return 0, fmt.Errorf("failed to count rows: %w", err)
 	}
-	return strconv.Atoi(strings.TrimSpace(string(output)))
+	return count, err
 }
 
 func (t *Table) tempFilename() string {
