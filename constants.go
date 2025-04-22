@@ -301,7 +301,7 @@ var (
 		Columns: []Column{
 			{Name: "geometry", RawName: "the_geom", Type: ColumnTypeGeometry, NotNullable: true},
 			{Name: "shape_leng", RawName: "Shape_Leng", Type: ColumnTypeDouble, NotNullable: true},
-			{Name: "shape_area", RawName: "Shape_Areaw", Type: ColumnTypeDouble, NotNullable: true},
+			{Name: "shape_area", RawName: "Shape_Area", Type: ColumnTypeDouble, NotNullable: true},
 			{Name: "ward_precinct", RawName: "Ward_Precinct", Type: ColumnTypeString, NotNullable: true},
 			{Name: "ward", RawName: "Ward", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "precinct", RawName: "Precinct", Type: ColumnTypeInt, NotNullable: true},

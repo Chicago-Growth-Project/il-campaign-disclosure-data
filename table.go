@@ -65,6 +65,7 @@ func (t *Table) Create(db *sql.DB) error {
 		return fmt.Errorf("failed to download file: %w", err)
 	}
 
+	// TODO - Only do this if the file is a TSV and not a CSV
 	err = t.convertFile(t.tempFilename())
 	if err != nil {
 		return fmt.Errorf("failed to convert file: %w", err)
