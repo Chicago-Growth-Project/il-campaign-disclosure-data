@@ -42,7 +42,23 @@ Creates a new table through the following steps:
 * Remove the temporary files.
 */
 func (t *Table) Create(db *sql.DB) error {
-	err := downloadFile(t.tempFilename(), t.URL)
+
+	err := t.createTable(db)
+	if err != nil {
+		return fmt.Errorf("failed to create table: %w", err)
+	}
+
+	count, err := t.countRows(db)
+	if err != nil {
+		return fmt.Errorf("failed to count rows: %w", err)
+	}
+
+	if count > 0 {
+		fmt.Printf("Table %s found to have %d rows. Skipping import", t.Name, count)
+		return nil
+	}
+
+	err = downloadFile(t.tempFilename(), t.URL)
 	if err != nil {
 		return fmt.Errorf("failed to download file: %w", err)
 	}
@@ -52,17 +68,12 @@ func (t *Table) Create(db *sql.DB) error {
 		return fmt.Errorf("failed to convert file: %w", err)
 	}
 
-	err = t.createTable(db)
-	if err != nil {
-		return fmt.Errorf("failed to create table: %w", err)
-	}
-
 	err = t.loadFile(t.newFilename(), db)
 	if err != nil {
 		return fmt.Errorf("failed to load file: %w", err)
 	}
 
-	count, err := t.countRows(db)
+	count, err = t.countRows(db)
 	if err != nil {
 		return fmt.Errorf("failed to count rows: %w", err)
 	}
