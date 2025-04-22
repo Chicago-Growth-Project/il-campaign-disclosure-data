@@ -12,11 +12,13 @@ import (
 type ColumnType string
 
 const (
-	ColumnTypeString  ColumnType = "STRING"
-	ColumnTypeInt     ColumnType = "INTEGER"
-	ColumnTypeBigInt  ColumnType = "BIGINT"
-	ColumnTypeDecimal ColumnType = "DECIMAL(12,2)"
-	ColumnTypeBool    ColumnType = "BOOLEAN"
+	ColumnTypeString   ColumnType = "STRING"
+	ColumnTypeInt      ColumnType = "INTEGER"
+	ColumnTypeBigInt   ColumnType = "BIGINT"
+	ColumnTypeDecimal  ColumnType = "DECIMAL(12,2)"
+	ColumnTypeDouble   ColumnType = "DOUBLE"
+	ColumnTypeBool     ColumnType = "BOOLEAN"
+	ColumnTypeGeometry ColumnType = "GEOMETRY"
 )
 
 type Column struct {

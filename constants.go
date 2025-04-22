@@ -295,4 +295,17 @@ var (
 		},
 		IndexedColumns: []string{"id", "committee_id", "filed_doc_id"},
 	}
+	Wards = Table{
+		Name: "wards",
+		URL:  "https://data.cityofchicago.org/api/views/6piy-vbxa/rows.csv?fourfour=6piy-vbxa&accessType=DOWNLOAD",
+		Columns: []Column{
+			{Name: "geometry", RawName: "the_geom", Type: ColumnTypeGeometry, NotNullable: true},
+			{Name: "shape_leng", RawName: "Shape_Leng", Type: ColumnTypeDouble, NotNullable: true},
+			{Name: "shape_area", RawName: "Shape_Areaw", Type: ColumnTypeDouble, NotNullable: true},
+			{Name: "ward_precinct", RawName: "Ward_Precinct", Type: ColumnTypeString, NotNullable: true},
+			{Name: "ward", RawName: "Ward", Type: ColumnTypeInt, NotNullable: true},
+			{Name: "precinct", RawName: "Precinct", Type: ColumnTypeInt, NotNullable: true},
+		},
+		IndexedColumns: []string{"ward", "precinct"},
+	}
 )
