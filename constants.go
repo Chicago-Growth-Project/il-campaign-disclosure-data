@@ -2,8 +2,9 @@ package main
 
 var (
 	Candidates = Table{
-		Name: "candidates",
-		URL:  "https://elections.il.gov/campaigndisclosuredatafiles/Candidates.txt",
+		Name:     "candidates",
+		URL:      "https://elections.il.gov/campaigndisclosuredatafiles/Candidates.txt",
+		FileType: TSV,
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "last_name", RawName: "FirstName", Type: ColumnTypeString},
@@ -23,8 +24,9 @@ var (
 		IndexedColumns: []string{"id", "last_name", "first_name"},
 	}
 	CandidateCommittees = Table{
-		Name: "candidate_committees",
-		URL:  "https://elections.il.gov/campaigndisclosuredatafiles/CmteCandidateLinks.txt",
+		Name:     "candidate_committees",
+		URL:      "https://elections.il.gov/campaigndisclosuredatafiles/CmteCandidateLinks.txt",
+		FileType: TSV,
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "committee_id", RawName: "CommitteeID", Type: ColumnTypeInt, NotNullable: true},
@@ -33,8 +35,9 @@ var (
 		IndexedColumns: []string{"id", "committee_id", "candidate_id"},
 	}
 	CandidateElections = Table{
-		Name: "candidate_elections",
-		URL:  "https://elections.il.gov/campaigndisclosuredatafiles/CanElections.txt",
+		Name:     "candidate_elections",
+		URL:      "https://elections.il.gov/campaigndisclosuredatafiles/CanElections.txt",
+		FileType: TSV,
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "candidate_id", RawName: "CandidateID", Type: ColumnTypeInt, NotNullable: true},
@@ -49,8 +52,9 @@ var (
 		IndexedColumns: []string{"id", "candidate_id"},
 	}
 	Committees = Table{
-		Name: "committees",
-		URL:  "https://elections.il.gov/campaigndisclosuredatafiles/Committees.txt",
+		Name:     "committees",
+		URL:      "https://elections.il.gov/campaigndisclosuredatafiles/Committees.txt",
+		FileType: TSV,
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "type_of_committee", RawName: "TypeOfCommittee", Type: ColumnTypeString},
@@ -83,8 +87,9 @@ var (
 		IndexedColumns: []string{"id"},
 	}
 	CommitteeOfficers = Table{
-		Name: "committee_officers",
-		URL:  "https://elections.il.gov/campaigndisclosuredatafiles/CmteOfficerLinks.txt",
+		Name:     "committee_officers",
+		URL:      "https://elections.il.gov/campaigndisclosuredatafiles/CmteOfficerLinks.txt",
+		FileType: TSV,
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "committee_id", RawName: "CommitteeID", Type: ColumnTypeInt, NotNullable: true},
@@ -93,8 +98,9 @@ var (
 		IndexedColumns: []string{"id", "committee_id", "officer_id"},
 	}
 	D2Totals = Table{
-		Name: "d2_totals",
-		URL:  "https://elections.il.gov/campaigndisclosuredatafiles/D2Totals.txt",
+		Name:     "d2_totals",
+		URL:      "https://elections.il.gov/campaigndisclosuredatafiles/D2Totals.txt",
+		FileType: TSV,
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "committee_id", RawName: "CommitteeID", Type: ColumnTypeInt, NotNullable: true},
@@ -131,8 +137,9 @@ var (
 		IndexedColumns: []string{"id", "committee_id", "filed_doc_id"},
 	}
 	Expenditures = Table{
-		Name: "expenditures",
-		URL:  "https://elections.il.gov/campaigndisclosuredatafiles/Expenditures.txt",
+		Name:     "expenditures",
+		URL:      "https://elections.il.gov/campaigndisclosuredatafiles/Expenditures.txt",
+		FileType: TSV,
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "committee_id", RawName: "CommitteeID", Type: ColumnTypeInt, NotNullable: true},
@@ -161,8 +168,9 @@ var (
 		IndexedColumns: []string{"id", "committee_id", "filed_doc_id"},
 	}
 	FiledDocs = Table{
-		Name: "filed_docs",
-		URL:  "https://elections.il.gov/campaigndisclosuredatafiles/FiledDocs.txt",
+		Name:     "filed_docs",
+		URL:      "https://elections.il.gov/campaigndisclosuredatafiles/FiledDocs.txt",
+		FileType: TSV,
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "committee_id", RawName: "CommitteeID", Type: ColumnTypeInt, NotNullable: true},
@@ -197,8 +205,9 @@ var (
 		IndexedColumns: []string{"id", "committee_id"},
 	}
 	Investments = Table{
-		Name: "investments",
-		URL:  "https://elections.il.gov/campaigndisclosuredatafiles/Investments.txt",
+		Name:     "investments",
+		URL:      "https://elections.il.gov/campaigndisclosuredatafiles/Investments.txt",
+		FileType: TSV,
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "committee_id", RawName: "CommitteeID", Type: ColumnTypeInt, NotNullable: true},
@@ -223,8 +232,9 @@ var (
 		IndexedColumns: []string{"id", "committee_id", "filed_doc_id"},
 	}
 	Officers = Table{
-		Name: "officers",
-		URL:  "https://elections.il.gov/campaigndisclosuredatafiles/Officers.txt",
+		Name:     "officers",
+		URL:      "https://elections.il.gov/campaigndisclosuredatafiles/Officers.txt",
+		FileType: TSV,
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "last_name", RawName: "LastName", Type: ColumnTypeString},
@@ -241,8 +251,9 @@ var (
 		IndexedColumns: []string{"id", "last_name", "first_name"},
 	}
 	PreviousOfficers = Table{
-		Name: "previous_officers",
-		URL:  "https://elections.il.gov/campaigndisclosuredatafiles/PrevOfficers.txt",
+		Name:     "previous_officers",
+		URL:      "https://elections.il.gov/campaigndisclosuredatafiles/PrevOfficers.txt",
+		FileType: TSV,
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "committee_id", RawName: "CommitteeID", Type: ColumnTypeInt, NotNullable: true},
@@ -260,8 +271,9 @@ var (
 		IndexedColumns: []string{"id", "committee_id", "last_name", "first_name"},
 	}
 	Receipts = Table{
-		Name: "receipts",
-		URL:  "https://elections.il.gov/campaigndisclosuredatafiles/Receipts.txt",
+		Name:     "receipts",
+		URL:      "https://elections.il.gov/campaigndisclosuredatafiles/Receipts.txt",
+		FileType: TSV,
 		Columns: []Column{
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "committee_id", RawName: "CommitteeID", Type: ColumnTypeInt, NotNullable: true},
@@ -294,5 +306,19 @@ var (
 			{Name: "redaction_requested", RawName: "RedactionRequested", Type: ColumnTypeBool},
 		},
 		IndexedColumns: []string{"id", "committee_id", "filed_doc_id"},
+	}
+	Wards = Table{
+		Name:     "wards",
+		URL:      "https://data.cityofchicago.org/api/views/6piy-vbxa/rows.csv?fourfour=6piy-vbxa&accessType=DOWNLOAD",
+		FileType: CSV,
+		Columns: []Column{
+			{Name: "geometry", RawName: "the_geom", Type: ColumnTypeGeometry, NotNullable: true},
+			{Name: "shape_leng", RawName: "Shape_Leng", Type: ColumnTypeDouble, NotNullable: true},
+			{Name: "shape_area", RawName: "Shape_Area", Type: ColumnTypeDouble, NotNullable: true},
+			{Name: "ward_precinct", RawName: "Ward_Precinct", Type: ColumnTypeString, NotNullable: true},
+			{Name: "ward", RawName: "Ward", Type: ColumnTypeInt, NotNullable: true},
+			{Name: "precinct", RawName: "Precinct", Type: ColumnTypeInt, NotNullable: true},
+		},
+		IndexedColumns: []string{"ward", "precinct"},
 	}
 )

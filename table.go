@@ -10,13 +10,18 @@ import (
 )
 
 type ColumnType string
+type FileType string
 
 const (
-	ColumnTypeString  ColumnType = "STRING"
-	ColumnTypeInt     ColumnType = "INTEGER"
-	ColumnTypeBigInt  ColumnType = "BIGINT"
-	ColumnTypeDecimal ColumnType = "DECIMAL(12,2)"
-	ColumnTypeBool    ColumnType = "BOOLEAN"
+	ColumnTypeString   ColumnType = "STRING"
+	ColumnTypeInt      ColumnType = "INTEGER"
+	ColumnTypeBigInt   ColumnType = "BIGINT"
+	ColumnTypeDecimal  ColumnType = "DECIMAL(12,2)"
+	ColumnTypeDouble   ColumnType = "DOUBLE"
+	ColumnTypeBool     ColumnType = "BOOLEAN"
+	ColumnTypeGeometry ColumnType = "GEOMETRY"
+	CSV                FileType   = "CSV"
+	TSV                FileType   = "TSV"
 )
 
 type Column struct {
@@ -30,6 +35,7 @@ type Table struct {
 	Name           string
 	IndexedColumns []string // TODO: Possibly handle unique indexes
 	URL            string
+	FileType       FileType
 	Columns        []Column
 }
 
@@ -42,19 +48,47 @@ Creates a new table through the following steps:
 * Remove the temporary files.
 */
 func (t *Table) Create(db *sql.DB) error {
-	err := downloadFile(t.tempFilename(), t.URL)
+
+	err := t.createTable(db)
+	if err != nil {
+		return fmt.Errorf("failed to create table: %w", err)
+	}
+
+	count, err := t.countRows(db)
+	if err != nil {
+		return fmt.Errorf("failed to count rows: %w", err)
+	}
+
+	if count > 0 {
+		fmt.Printf("Table %s found to have %d rows. Skipping import", t.Name, count)
+		return nil
+	}
+
+	err = downloadFile(t.tempFilename(), t.URL)
 	if err != nil {
 		return fmt.Errorf("failed to download file: %w", err)
 	}
 
-	err = t.convertFile(t.tempFilename())
-	if err != nil {
-		return fmt.Errorf("failed to convert file: %w", err)
-	}
+	if t.FileType == TSV {
+		err = t.convertFile(t.tempFilename())
+		if err != nil {
+			return fmt.Errorf("failed to convert file: %w", err)
+		}
+	} else if t.FileType == CSV {
+		// Create a newfile for compatiblity for now
+		data, err := os.ReadFile(t.tempFilename())
 
-	err = t.createTable(db)
-	if err != nil {
-		return fmt.Errorf("failed to create table: %w", err)
+		if err != nil {
+			return fmt.Errorf("failed to read file: %w", err)
+		}
+
+		err = os.WriteFile(t.newFilename(), data, 0644)
+
+		if err != nil {
+			return fmt.Errorf("failed to write file: %w", err)
+		}
+	} else {
+		return fmt.Errorf("Failed to have a parser available: %w", err)
 	}
 
 	err = t.loadFile(t.newFilename(), db)
@@ -62,7 +96,7 @@ func (t *Table) Create(db *sql.DB) error {
 		return fmt.Errorf("failed to load file: %w", err)
 	}
 
-	count, err := t.countRows(db)
+	count, err = t.countRows(db)
 	if err != nil {
 		return fmt.Errorf("failed to count rows: %w", err)
 	}

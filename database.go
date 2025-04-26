@@ -13,5 +13,17 @@ func ConnectDb() (*sql.DB, error) {
 		return nil, err
 	}
 
+	_, err = db.Exec("INSTALL spatial")
+
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = db.Exec("LOAD spatial")
+
+	if err != nil {
+		return nil, err
+	}
+
 	return db, nil
 }
