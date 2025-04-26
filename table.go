@@ -10,6 +10,7 @@ import (
 )
 
 type ColumnType string
+type FileType string
 
 const (
 	ColumnTypeString   ColumnType = "STRING"
@@ -19,6 +20,8 @@ const (
 	ColumnTypeDouble   ColumnType = "DOUBLE"
 	ColumnTypeBool     ColumnType = "BOOLEAN"
 	ColumnTypeGeometry ColumnType = "GEOMETRY"
+	CSV                FileType   = "CSV"
+	TSV                FileType   = "TSV"
 )
 
 type Column struct {
@@ -32,6 +35,7 @@ type Table struct {
 	Name           string
 	IndexedColumns []string // TODO: Possibly handle unique indexes
 	URL            string
+	FileType       FileType
 	Columns        []Column
 }
 
@@ -65,10 +69,26 @@ func (t *Table) Create(db *sql.DB) error {
 		return fmt.Errorf("failed to download file: %w", err)
 	}
 
-	// TODO - Only do this if the file is a TSV and not a CSV
-	err = t.convertFile(t.tempFilename())
-	if err != nil {
-		return fmt.Errorf("failed to convert file: %w", err)
+	if t.FileType == TSV {
+		err = t.convertFile(t.tempFilename())
+		if err != nil {
+			return fmt.Errorf("failed to convert file: %w", err)
+		}
+	} else if t.FileType == CSV {
+		// Create a newfile for compatiblity for now
+		data, err := os.ReadFile(t.tempFilename())
+
+		if err != nil {
+			return fmt.Errorf("failed to read file: %w", err)
+		}
+
+		err = os.WriteFile(t.newFilename(), data, 0644)
+
+		if err != nil {
+			return fmt.Errorf("failed to write file: %w", err)
+		}
+	} else {
+		return fmt.Errorf("Failed to have a parser available: %w", err)
 	}
 
 	err = t.loadFile(t.newFilename(), db)
