@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 )
 
 type ColumnType string
@@ -49,6 +50,8 @@ Creates a new table through the following steps:
 */
 func (t *Table) Create(db *sql.DB) error {
 
+	downloadOnly := os.Getenv("DOWNLOAD_ONLY") == "1"
+
 	err := t.createTable(db)
 	if err != nil {
 		return fmt.Errorf("failed to create table: %w", err)
@@ -59,15 +62,17 @@ func (t *Table) Create(db *sql.DB) error {
 		return fmt.Errorf("failed to count rows: %w", err)
 	}
 
-	if count > 0 {
+	if count > 0 && !downloadOnly {
 		fmt.Printf("Table %s found to have %d rows. Skipping import", t.Name, count)
 		return nil
 	}
 
+	fmt.Println("Downloading file from URL:", t.URL)
 	err = downloadFile(t.tempFilename(), t.URL)
 	if err != nil {
 		return fmt.Errorf("failed to download file: %w", err)
 	}
+	fmt.Println("Done Downloading file")
 
 	if t.FileType == TSV {
 		err = t.convertFile(t.tempFilename())
@@ -91,6 +96,16 @@ func (t *Table) Create(db *sql.DB) error {
 		return fmt.Errorf("Failed to have a parser available: %w", err)
 	}
 
+	if downloadOnly {
+		return nil
+	}
+
+	fmt.Println("Clean File", t.newFilename())
+	err = t.cleanFile(t.newFilename())
+	if err != nil {
+		return fmt.Errorf("failed to clean file: %w", err)
+	}
+
 	err = t.loadFile(t.newFilename(), db)
 	if err != nil {
 		return fmt.Errorf("failed to load file: %w", err)
@@ -112,6 +127,47 @@ func (t *Table) Create(db *sql.DB) error {
 	fmt.Println("Removed temporary files:", t.tempFilename(), t.newFilename())
 	fmt.Println("Done with table:", t.Name)
 
+	return nil
+}
+
+func (t *Table) cleanFile(filepath string) error {
+	file, err := os.Open(filepath)
+	if err != nil {
+		return fmt.Errorf("failed to open file for cleaning: %w", err)
+	}
+	defer file.Close()
+
+	var cleanedRecords [][]string
+	csvReader := csv.NewReader(file)
+	csvReader.Comma = ',' // Assuming CSV format
+	for {
+		rec, err := csvReader.Read()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			return fmt.Errorf("failed to read file for cleaning: %w", err)
+		}
+
+		var cleanedRec []string
+		for _, field := range rec {
+			cleanedRec = append(cleanedRec, strings.TrimSpace(field))
+		}
+
+		cleanedRecords = append(cleanedRecords, cleanedRec)
+	}
+
+	rewriteFile, err := os.Create(filepath)
+	if err != nil {
+		return fmt.Errorf("failed to create cleaned file: %w", err)
+	}
+	defer rewriteFile.Close()
+
+	csvWriter := csv.NewWriter(rewriteFile)
+	defer csvWriter.Flush()
+
+	if err = csvWriter.WriteAll(cleanedRecords); err != nil {
+		return fmt.Errorf("failed to write cleaned data: %w", err)
+	}
 	return nil
 }
 
@@ -176,7 +232,7 @@ func (t *Table) createTable(db *sql.DB) error {
 }
 
 func (t *Table) loadFile(filepath string, db *sql.DB) error {
-	query := fmt.Sprintf("COPY %s FROM '%s' (AUTO_DETECT TRUE, IGNORE_ERRORS TRUE, STORE_REJECTS TRUE);", t.Name, filepath)
+	query := fmt.Sprintf("COPY %s FROM '%s' (AUTO_DETECT TRUE, NULLSTR ' ', STORE_REJECTS TRUE);", t.Name, filepath)
 	_, err := db.Exec(query)
 	if err != nil {
 		return fmt.Errorf("failed to load file %s into table %s: %w", filepath, t.Name, err)

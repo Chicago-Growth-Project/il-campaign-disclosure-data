@@ -6,19 +6,19 @@ const DatabasePath = "il-campaign-disclosures.db"
 
 func main() {
 	allTables := []Table{
-		Candidates,
+		/*Candidates,
 		CandidateCommittees,
 		CandidateElections,
 		Committees,
 		CommitteeOfficers,
 		D2Totals,
-		Expenditures,
+		Expenditures,*/
 		FiledDocs,
-		Investments,
+		/*Investments,
 		Officers,
 		PreviousOfficers,
 		Receipts,
-		Wards,
+		Wards,*/
 	}
 
 	db, err := ConnectDb()
