@@ -74,33 +74,18 @@ func (t *Table) Create(db *sql.DB) error {
 	}
 	fmt.Println("Done Downloading file")
 
-	if t.FileType == TSV {
-		err = t.convertFile(t.tempFilename())
-		if err != nil {
-			return fmt.Errorf("failed to convert file: %w", err)
-		}
-	} else if t.FileType == CSV {
-		// Create a newfile for compatiblity for now
-		data, err := os.ReadFile(t.tempFilename())
-
-		if err != nil {
-			return fmt.Errorf("failed to read file: %w", err)
-		}
-
-		err = os.WriteFile(t.newFilename(), data, 0644)
-
-		if err != nil {
-			return fmt.Errorf("failed to write file: %w", err)
-		}
-	} else {
-		return fmt.Errorf("Failed to have a parser available: %w", err)
-	}
-
 	if downloadOnly {
 		return nil
 	}
 
-	fmt.Println("Clean File", t.newFilename())
+	fmt.Println("Convert File to UTF-8")
+
+	err = t.convertFileToUTF8(t.tempFilename())
+	if err != nil {
+		return fmt.Errorf("failed to convert file to UTF-8: %w", err)
+	}
+
+	fmt.Println("Clean File (trim)", t.newFilename())
 	err = t.cleanFile(t.newFilename())
 	if err != nil {
 		return fmt.Errorf("failed to clean file: %w", err)
@@ -130,6 +115,29 @@ func (t *Table) Create(db *sql.DB) error {
 	return nil
 }
 
+func (t *Table) convertFileToUTF8(filepath string) error {
+	file, err := os.Open(filepath)
+	if err != nil {
+		return fmt.Errorf("failed to open file for conversion: %w", err)
+	}
+	defer file.Close()
+
+	data, err := io.ReadAll(file)
+	if err != nil {
+		return fmt.Errorf("failed to read file for conversion: %w", err)
+	}
+
+	// Convert to UTF-8
+	utf8Data := []byte(strings.ReplaceAll(string(data), "\"", "'"))
+
+	err = os.WriteFile(filepath, utf8Data, 0644)
+	if err != nil {
+		return fmt.Errorf("failed to write converted file: %w", err)
+	}
+
+	return nil
+}
+
 func (t *Table) cleanFile(filepath string) error {
 	file, err := os.Open(filepath)
 	if err != nil {
@@ -138,8 +146,19 @@ func (t *Table) cleanFile(filepath string) error {
 	defer file.Close()
 
 	var cleanedRecords [][]string
-	csvReader := csv.NewReader(file)
-	csvReader.Comma = ',' // Assuming CSV format
+
+	// Go's CSV reader, when in TSV mode, can't handle double quotes inside
+	// of fields. To get around this, we replace all double quotes with
+	// single quotes when downloading the file.
+	quoteReplacer := &quoteReplacer{file}
+	csvReader := csv.NewReader(quoteReplacer)
+
+	if t.FileType == TSV {
+		csvReader.Comma = '\t'
+	} else if t.FileType == CSV {
+		csvReader.Comma = ','
+	}
+
 	for {
 		rec, err := csvReader.Read()
 		if err == io.EOF {
@@ -232,7 +251,11 @@ func (t *Table) createTable(db *sql.DB) error {
 }
 
 func (t *Table) loadFile(filepath string, db *sql.DB) error {
-	query := fmt.Sprintf("COPY %s FROM '%s' (AUTO_DETECT TRUE, STORE_REJECTS TRUE);", t.Name, filepath)
+	delim := ','
+	if t.FileType == TSV {
+		delim = '\t'
+	}
+	query := fmt.Sprintf("COPY %s FROM '%s' (AUTO_DETECT TRUE, STORE_REJECTS TRUE, DELIM '%x');", t.Name, filepath, delim)
 	_, err := db.Exec(query)
 	if err != nil {
 		return fmt.Errorf("failed to load file %s into table %s: %w", filepath, t.Name, err)
