@@ -67,13 +67,14 @@ func (t *Table) Create(db *sql.DB) error {
 		return nil
 	}
 
-	fmt.Println("Downloading file from URL:", t.URL)
-	err = downloadFile(t.tempFilename(), t.URL)
-	if err != nil {
-		return fmt.Errorf("failed to download file: %w", err)
-	}
-	fmt.Println("Done Downloading file")
-
+	/*
+		fmt.Println("Downloading file from URL:", t.URL)
+		err = downloadFile(t.tempFilename(), t.URL)
+		if err != nil {
+			return fmt.Errorf("failed to download file: %w", err)
+		}
+		fmt.Println("Done Downloading file")
+	*/
 	if downloadOnly {
 		return nil
 	}
@@ -85,13 +86,13 @@ func (t *Table) Create(db *sql.DB) error {
 		return fmt.Errorf("failed to convert file to UTF-8: %w", err)
 	}
 
-	fmt.Println("Clean File (trim)", t.newFilename())
-	err = t.cleanFile(t.newFilename())
+	fmt.Println("Clean File (trim)", t.tempFilename())
+	err = t.cleanFile(t.tempFilename())
 	if err != nil {
 		return fmt.Errorf("failed to clean file: %w", err)
 	}
 
-	err = t.loadFile(t.newFilename(), db)
+	err = t.loadFile(t.tempFilename(), db)
 	if err != nil {
 		return fmt.Errorf("failed to load file: %w", err)
 	}
@@ -251,11 +252,14 @@ func (t *Table) createTable(db *sql.DB) error {
 }
 
 func (t *Table) loadFile(filepath string, db *sql.DB) error {
-	delim := ','
+	delim := ","
 	if t.FileType == TSV {
-		delim = '\t'
+		delim = "\\t"
 	}
-	query := fmt.Sprintf("COPY %s FROM '%s' (AUTO_DETECT TRUE, STORE_REJECTS TRUE, DELIM '%x');", t.Name, filepath, delim)
+	query := fmt.Sprintf("COPY %s FROM '%s' (AUTO_DETECT TRUE, STORE_REJECTS TRUE, DELIM '%s');", t.Name, filepath, delim)
+	//query := "COPY filed_docs FROM 'filed_docs.csv' (AUTO_DETECT TRUE, STORE_REJECTS TRUE, DELIM '\\t');"
+
+	fmt.Println("QUERY:", query)
 	_, err := db.Exec(query)
 	if err != nil {
 		return fmt.Errorf("failed to load file %s into table %s: %w", filepath, t.Name, err)
