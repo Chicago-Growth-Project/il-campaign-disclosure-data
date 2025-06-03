@@ -7,6 +7,11 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
+	"unicode/utf8"
+
+	"golang.org/x/text/encoding/charmap"
+	"golang.org/x/text/transform"
 )
 
 type ColumnType string
@@ -68,6 +73,8 @@ func (t *Table) Create(db *sql.DB) error {
 	if err != nil {
 		return fmt.Errorf("failed to download file: %w", err)
 	}
+
+	err = t.convertToUTF8(t.tempFilename(), t.tempFilename())
 
 	if t.FileType == TSV {
 		err = t.convertFile(t.tempFilename())
@@ -152,11 +159,75 @@ func (t *Table) convertFile(filepath string) error {
 		} else if firstLine {
 			firstLine = false
 		} else {
-			csvWriter.Write(rec)
+			var cleanedRec []string
+			for _, field := range rec {
+				cleanedRec = append(cleanedRec, strings.TrimSpace(field))
+			}
+			csvWriter.Write(cleanedRec)
 		}
 	}
 
 	csvWriter.Flush()
+	return nil
+}
+
+// convertToUTF8 attempts to convert the content of inputFile to UTF-8
+// and writes it to outputFile.
+// It tries decoding as UTF-8 first, then as Windows-1252 if UTF-8 fails.
+func (t *Table) convertToUTF8(inputFile, outputFile string) error {
+	// Read the raw bytes from the input file
+	rawBytes, err := os.ReadFile(inputFile)
+	if err != nil {
+		return fmt.Errorf("failed to read input file %s: %w", inputFile, err)
+	}
+
+	var content string
+
+	// 1. Try to interpret as UTF-8 directly
+	if utf8.Valid(rawBytes) {
+		fmt.Printf("File %s is already valid UTF-8 or ASCII.\n", inputFile)
+		content = string(rawBytes)
+	} else {
+		fmt.Printf("File %s is not valid UTF-8. Attempting to decode as Windows-1252...\n", inputFile)
+		// 2. Try to decode as Windows-1252 (Cp1252)
+		decoder := charmap.Windows1252.NewDecoder()
+		utf8Bytes, _, err := transform.Bytes(decoder, rawBytes)
+		if err == nil {
+			content = string(utf8Bytes)
+			fmt.Println("Successfully decoded as Windows-1252 and converted to UTF-8.")
+		} else {
+			// 3. If Windows-1252 fails, you could try other encodings here
+			// or return an error indicating unknown encoding.
+			// For this example, we'll assume it might be ISO-8859-1 if not Windows-1252
+			// Note: Windows-1252 is a superset of ISO-8859-1 for many characters,
+			// but they differ in the 0x80-0x9F range.
+			fmt.Printf("Failed to decode as Windows-1252. Attempting ISO-8859-1 (Latin1)... Error: %v\n", err)
+			isoDecoder := charmap.ISO8859_1.NewDecoder()
+			utf8BytesISO, _, errISO := transform.Bytes(isoDecoder, rawBytes)
+			if errISO == nil {
+				content = string(utf8BytesISO)
+				fmt.Println("Successfully decoded as ISO-8859-1 and converted to UTF-8.")
+			} else {
+				return fmt.Errorf("failed to decode as Windows-1252 and ISO-8859-1. Unknown encoding or corrupt data. Last error: %w", errISO)
+			}
+		}
+	}
+
+	// Optional: Remove BOM (Byte Order Mark) if present, though it's less common for UTF-8
+	// unless it came from a Windows source.
+	// UTF-8 BOM is EF BB BF
+	if strings.HasPrefix(content, "\xef\xbb\xbf") {
+		content = strings.TrimPrefix(content, "\xef\xbb\xbf")
+		fmt.Println("Removed UTF-8 BOM.")
+	}
+
+	// Write the UTF-8 content to the output file
+	err = os.WriteFile(outputFile, []byte(content), 0666)
+	if err != nil {
+		return fmt.Errorf("failed to write output file %s: %w", outputFile, err)
+	}
+
+	fmt.Printf("Successfully converted %s to UTF-8 and saved as %s\n", inputFile, outputFile)
 	return nil
 }
 
