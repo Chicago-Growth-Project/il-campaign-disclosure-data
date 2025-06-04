@@ -18,7 +18,8 @@ func main() {
 		Officers,
 		PreviousOfficers,
 		Receipts,
-		Wards,
+		WardShapes,
+		WardPrecinctShapes,
 	}
 
 	db, err := ConnectDb()

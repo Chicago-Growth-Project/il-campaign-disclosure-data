@@ -247,7 +247,7 @@ func (t *Table) createTable(db *sql.DB) error {
 }
 
 func (t *Table) loadFile(filepath string, db *sql.DB) error {
-	query := fmt.Sprintf("COPY %s FROM '%s' (AUTO_DETECT TRUE, IGNORE_ERRORS TRUE, STORE_REJECTS TRUE);", t.Name, filepath)
+	query := fmt.Sprintf("COPY %s FROM '%s' (AUTO_DETECT TRUE);", t.Name, filepath)
 	_, err := db.Exec(query)
 	if err != nil {
 		return fmt.Errorf("failed to load file %s into table %s: %w", filepath, t.Name, err)
