@@ -65,7 +65,7 @@ func (t *Table) Create(db *sql.DB) error {
 	}
 
 	if count > 0 {
-		fmt.Printf("Table %s found to have %d rows. Skipping import", t.Name, count)
+		fmt.Printf("Table %s found to have %d rows. Skipping import\n", t.Name, count)
 		return nil
 	}
 

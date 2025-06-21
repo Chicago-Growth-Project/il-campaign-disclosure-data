@@ -278,7 +278,7 @@ var (
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "committee_id", RawName: "CommitteeID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "filed_doc_id", RawName: "FiledDocID", Type: ColumnTypeInt, NotNullable: true},
-			{Name: "etrans_id", RawName: "ETransID", Type: ColumnTypeInt},
+			{Name: "etrans_id", RawName: "ETransID", Type: ColumnTypeString},
 			{Name: "last_only_name", RawName: "LastOnlyName", Type: ColumnTypeString},
 			{Name: "first_name", RawName: "FirstName", Type: ColumnTypeString},
 			{Name: "receive_date", RawName: "RcvDate", Type: ColumnTypeString},
