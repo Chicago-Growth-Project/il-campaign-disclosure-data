@@ -18,7 +18,8 @@ func main() {
 		Officers,
 		PreviousOfficers,
 		Receipts,
-		Wards,
+		WardShapes,
+		WardPrecinctShapes,
 	}
 
 	db, err := ConnectDb()
@@ -36,5 +37,6 @@ func main() {
 		if err != nil {
 			fmt.Println(err)
 		}
+		fmt.Println("")
 	}
 }

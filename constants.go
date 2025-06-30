@@ -278,7 +278,7 @@ var (
 			{Name: "id", RawName: "ID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "committee_id", RawName: "CommitteeID", Type: ColumnTypeInt, NotNullable: true},
 			{Name: "filed_doc_id", RawName: "FiledDocID", Type: ColumnTypeInt, NotNullable: true},
-			{Name: "etrans_id", RawName: "ETransID", Type: ColumnTypeInt},
+			{Name: "etrans_id", RawName: "ETransID", Type: ColumnTypeString},
 			{Name: "last_only_name", RawName: "LastOnlyName", Type: ColumnTypeString},
 			{Name: "first_name", RawName: "FirstName", Type: ColumnTypeString},
 			{Name: "receive_date", RawName: "RcvDate", Type: ColumnTypeString},
@@ -307,8 +307,8 @@ var (
 		},
 		IndexedColumns: []string{"id", "committee_id", "filed_doc_id"},
 	}
-	Wards = Table{
-		Name:     "wards",
+	WardPrecinctShapes = Table{
+		Name:     "ward_precinct_shapes",
 		URL:      "https://data.cityofchicago.org/api/views/6piy-vbxa/rows.csv?fourfour=6piy-vbxa&accessType=DOWNLOAD",
 		FileType: CSV,
 		Columns: []Column{
@@ -320,5 +320,22 @@ var (
 			{Name: "precinct", RawName: "Precinct", Type: ColumnTypeInt, NotNullable: true},
 		},
 		IndexedColumns: []string{"ward", "precinct"},
+	}
+
+	WardShapes = Table{
+		Name:     "ward_shapes",
+		URL:      "https://data.cityofchicago.org/resource/p293-wvbd.csv",
+		FileType: CSV,
+		Columns: []Column{
+			{Name: "ward", RawName: "ward", Type: ColumnTypeInt, NotNullable: true},
+			{Name: "geometry", RawName: "the_geom", Type: ColumnTypeGeometry, NotNullable: true},
+			{Name: "objectid", RawName: "objectid", Type: ColumnTypeInt, NotNullable: true},
+			{Name: "edit_date", RawName: "edit_date", Type: ColumnTypeString, NotNullable: true},
+			{Name: "ward_id", RawName: "ward_id", Type: ColumnTypeInt, NotNullable: true},
+			{Name: "global_id", RawName: "globalid", Type: ColumnTypeString, NotNullable: true},
+			{Name: "shape_area", RawName: "st_area_sh", Type: ColumnTypeDouble, NotNullable: true},
+			{Name: "shape_leng", RawName: "st_length_", Type: ColumnTypeDouble, NotNullable: true},
+		},
+		IndexedColumns: []string{"ward_id"},
 	}
 )
