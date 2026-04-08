@@ -1,3 +1,6 @@
 *.db
 *.csv
 *.tsv
+CLAUDE.md
+.claude
+il-campaign-disclosure-data
