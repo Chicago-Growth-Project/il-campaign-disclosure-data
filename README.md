@@ -33,10 +33,10 @@ PR requests are welcome!
 ```
 git clone https://github.com/chicago-growth-project/il-campaign-disclosure-data.git
 cd il-campaign-disclosure-data
-go run .
+go run ./cmd/il-data-collector/
 ```
 
-If you want to skip some tables, modify the `AllTables` array in [main.go](main.go) to only include the tables you want to download.
+If you want to skip some tables, modify the `allTables` slice in [cmd/il-data-collector/main.go](cmd/il-data-collector/main.go) to only include the tables you want to download.
 
 Development on Windows requires the installation of gcc or clang. Instructions for setting up
 with MinGW-w64 can be found [here](https://code.visualstudio.com/docs/cpp/config-mingw#_installing-the-mingww64-toolchain)

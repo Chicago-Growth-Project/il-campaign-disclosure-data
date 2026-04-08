@@ -7,8 +7,8 @@ SUPPORTED_OS= linux darwin windows
 SUPPORTED_ARCH=amd64 arm64
 BINARY_NAME=il-data-collector
 
-.PHONY: all build-all build-local linux-amd64 darwin-arm64 windows-amd64 test clean
-all: test build-all
+.PHONY: all build-all build-local linux-amd64 darwin-arm64 windows-amd64 test fmt clean
+all: fmt test build-all
 build-all: build-local
 linux-amd64:
 	CGO_ENABLED=1 GOOS=linux GOARCH=amd64 $(GOBUILD) -o dist/$(BINARY_NAME)-linux-amd64 -v .
@@ -20,6 +20,8 @@ darwin-arm64:
 #	CGO_ENABLED=1 GOOS=darwin GOARCH=arm64 $(GOBUILD) -o dist/$(BINARY_NAME)-macos -v .
 build-local:
 	$(GOBUILD) -o dist/$(BINARY_NAME) -v .
+fmt:
+	gofmt -w .
 test:
 	$(GOTEST) -v ./...
 clean:

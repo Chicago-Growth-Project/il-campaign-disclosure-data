@@ -1,4 +1,4 @@
-package main
+package disclosure
 
 import (
 	"database/sql"
@@ -6,22 +6,19 @@ import (
 	_ "github.com/marcboeker/go-duckdb/v2"
 )
 
-func ConnectDb() (*sql.DB, error) {
-	db, err := sql.Open("duckdb", DatabasePath)
+const DefaultDatabasePath = "il-campaign-disclosures.db"
 
+func ConnectDb(path string) (*sql.DB, error) {
+	db, err := sql.Open("duckdb", path)
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = db.Exec("INSTALL spatial")
-
-	if err != nil {
+	if _, err = db.Exec("INSTALL spatial"); err != nil {
 		return nil, err
 	}
 
-	_, err = db.Exec("LOAD spatial")
-
-	if err != nil {
+	if _, err = db.Exec("LOAD spatial"); err != nil {
 		return nil, err
 	}
 
