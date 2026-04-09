@@ -24,3 +24,8 @@ func ConnectDb(path string) (*sql.DB, error) {
 
 	return db, nil
 }
+
+// ConnectDbReadOnly opens an existing database at path without loading extensions.
+func ConnectDbReadOnly(path string) (*sql.DB, error) {
+	return sql.Open("duckdb", path)
+}
