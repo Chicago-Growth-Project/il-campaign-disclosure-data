@@ -1,4 +1,4 @@
-package disclosure
+package internal
 
 import (
 	"encoding/csv"

@@ -15,12 +15,12 @@ import (
 	"fmt"
 	"os"
 
-	disclosure "chicagogrowthproject.org/il-campaign-disclosure-data"
+	"chicagogrowthproject.org/il-campaign-disclosure-data/internal"
 )
 
 func main() {
 	name := flag.String("name", "", "Committee name (partial match, case-insensitive)")
-	dbPath := flag.String("db", disclosure.DefaultDatabasePath, "Path to DuckDB database file")
+	dbPath := flag.String("db", internal.DefaultDatabasePath, "Path to DuckDB database file")
 	flag.Parse()
 
 	if *name == "" {
@@ -28,7 +28,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	db, err := disclosure.ConnectDbReadOnly(*dbPath)
+	db, err := internal.ConnectDbReadOnly(*dbPath)
 	if err != nil {
 		fmt.Println("Error connecting to database:", err)
 		os.Exit(1)

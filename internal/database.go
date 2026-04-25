@@ -1,4 +1,4 @@
-package disclosure
+package internal
 
 import (
 	"database/sql"
@@ -6,7 +6,7 @@ import (
 	_ "github.com/marcboeker/go-duckdb/v2"
 )
 
-const DefaultDatabasePath = "il-campaign-disclosures.db"
+const DefaultDatabasePath = "data/il-campaign-disclosures.db"
 
 func ConnectDb(path string) (*sql.DB, error) {
 	db, err := sql.Open("duckdb", path)

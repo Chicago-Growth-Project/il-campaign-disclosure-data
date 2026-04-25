@@ -1,4 +1,4 @@
-package disclosure
+package internal
 
 var (
 	Candidates = Table{

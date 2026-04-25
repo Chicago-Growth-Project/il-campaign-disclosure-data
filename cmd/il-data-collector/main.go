@@ -3,28 +3,28 @@ package main
 import (
 	"fmt"
 
-	disclosure "chicagogrowthproject.org/il-campaign-disclosure-data"
+	"chicagogrowthproject.org/il-campaign-disclosure-data/internal"
 )
 
 func main() {
-	allTables := []disclosure.Table{
-		disclosure.Candidates,
-		disclosure.CandidateCommittees,
-		disclosure.CandidateElections,
-		disclosure.Committees,
-		disclosure.CommitteeOfficers,
-		disclosure.D2Totals,
-		disclosure.Expenditures,
-		disclosure.FiledDocs,
-		disclosure.Investments,
-		disclosure.Officers,
-		disclosure.PreviousOfficers,
-		disclosure.Receipts,
-		disclosure.WardShapes,
-		disclosure.WardPrecinctShapes,
+	allTables := []internal.Table{
+		internal.Candidates,
+		internal.CandidateCommittees,
+		internal.CandidateElections,
+		internal.Committees,
+		internal.CommitteeOfficers,
+		internal.D2Totals,
+		internal.Expenditures,
+		internal.FiledDocs,
+		internal.Investments,
+		internal.Officers,
+		internal.PreviousOfficers,
+		internal.Receipts,
+		internal.WardShapes,
+		internal.WardPrecinctShapes,
 	}
 
-	db, err := disclosure.ConnectDb(disclosure.DefaultDatabasePath)
+	db, err := internal.ConnectDb(internal.DefaultDatabasePath)
 	if err != nil {
 		fmt.Println("Error connecting to database:", err)
 		return
