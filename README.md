@@ -1,12 +1,6 @@
 # IL Campaign Disclosure Database
 
-A set of scripts for downloading IL's campaign disclosure database and other data sources into a useable DuckDB database.
-
-## Caveats
-
-At the moment there's an issue with the Windows executable due to permissions on the DuckDB server.
-A [github issue](https://github.com/marcboeker/go-duckdb/issues/478) has been opened to track the issue.
-The issue should hopefully resolve once they fix the access to the extension.
+A set of commands for downloading and analyzing IL's campaign disclosure database and other data sources into a useable DuckDB database.
 
 ## Usage
 
@@ -33,13 +27,15 @@ PR requests are welcome!
 ```
 git clone https://github.com/chicago-growth-project/il-campaign-disclosure-data.git
 cd il-campaign-disclosure-data
-go run ./cmd/il-data-collector/
+make
 ```
 
 If you want to skip some tables, modify the `allTables` slice in [cmd/il-data-collector/main.go](cmd/il-data-collector/main.go) to only include the tables you want to download.
 
 Development on Windows requires the installation of gcc or clang. Instructions for setting up
 with MinGW-w64 can be found [here](https://code.visualstudio.com/docs/cpp/config-mingw#_installing-the-mingww64-toolchain)
+
+Running `make` will run unit tests and build all executables.
 
 ## Schema
 
