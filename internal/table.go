@@ -267,11 +267,11 @@ func (t *Table) countRows(db *sql.DB) (int, error) {
 }
 
 func (t *Table) tempFilename() string {
-	return "tmp/" + t.Name + ".tsv"
+	return "../tmp/" + t.Name + ".tsv"
 }
 
 func (t *Table) newFilename() string {
-	return "tmp/" + t.Name + ".csv"
+	return "../tmp/" + t.Name + ".csv"
 }
 
 func (t *Table) createTableSQL() string {
